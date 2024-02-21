@@ -2,23 +2,22 @@ package tmdb
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 )
 
 type TmdbMovie struct {
-	Overview    string
-	ReleaseDate string
-	Title       string
-	Character   string
+	Overview     string
+	Release_Date string
+	Title        string
+	Character    string
 }
 
 type TmdbMovieCreditsResponse struct {
 	Cast []TmdbMovie
 }
 
-func GetRyanGoslingMovies() {
+func GetRyanGoslingMovies() []TmdbMovie {
 	req, err := http.NewRequest(
 		"GET",
 		"https://api.themoviedb.org/3/person/30614-ryan-gosling/movie_credits",
@@ -43,8 +42,10 @@ func GetRyanGoslingMovies() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("%s", credits)
+		return credits.Cast
 	} else {
 		log.Fatal("Unexpected status code: ", resp.StatusCode)
 	}
+
+	return nil
 }

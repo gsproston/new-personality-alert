@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
+	"time"
 
 	"github.com/gsproston/new-personality-alert/tmdb"
 )
@@ -30,5 +32,13 @@ func main() {
 		return
 	}
 
-	tmdb.GetRyanGoslingMovies()
+	movies := tmdb.GetRyanGoslingMovies()
+	if movies != nil {
+		sort.Slice(movies, func(i, j int) bool {
+			iRelease, _ := time.Parse("2006-01-02", movies[i].Release_Date)
+			jRelease, _ := time.Parse("2006-01-02", movies[j].Release_Date)
+			return iRelease.After(jRelease)
+		})
+		fmt.Println("Latest movie: ", movies[0])
+	}
 }
