@@ -1,14 +1,24 @@
 package tmdb
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 )
 
+type TmdbMovie struct {
+	Overview    string
+	ReleaseDate string
+	Title       string
+	Character   string
+}
+
+type TmdbMovieCreditsResponse struct {
+	Cast []TmdbMovie
+}
+
 func GetRyanGoslingMovies() {
-	client := http.DefaultClient
 	req, err := http.NewRequest(
 		"GET",
 		"https://api.themoviedb.org/3/person/30614-ryan-gosling/movie_credits",
@@ -17,19 +27,23 @@ func GetRyanGoslingMovies() {
 		log.Fatal((err))
 	}
 
+	req.Header.Add("accept", "application/json")
 	req.Header.Add("Authorization", "Bearer "+TMDB_TOKEN)
-	resp, err := client.Do(req)
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatal((err))
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-		bodyBytes, err := io.ReadAll(resp.Body)
+		var credits TmdbMovieCreditsResponse
+		dec := json.NewDecoder(resp.Body)
+		err := dec.Decode(&credits)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(string(bodyBytes))
+		fmt.Println("%s", credits)
 	} else {
 		log.Fatal("Unexpected status code: ", resp.StatusCode)
 	}
