@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gsproston/new-personality-alert/email"
 	"github.com/gsproston/new-personality-alert/tmdb"
 )
 
@@ -37,11 +38,19 @@ func main() {
 		yesterday := time.Now().UTC().Add(time.Hour * -24)
 
 		// see if any films were released yesterday
+		foundMovie := false
 		for _, movie := range movies {
 			if movie.Release_Date == yesterday.Format("2006-01-02") {
-				fmt.Println("Found movie: ", movie)
+				email.SendAlert(movie.Title, movie.Overview, movie.Character)
+				foundMovie = true
 				break
 			}
+		}
+
+		if foundMovie {
+			fmt.Println("New movie found!")
+		} else {
+			fmt.Println("No new movie")
 		}
 	}
 }

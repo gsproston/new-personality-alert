@@ -24,4 +24,4 @@ go.work
 .vscode/
 
 # Secrets
-credentials.go
+config.go
