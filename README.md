@@ -22,6 +22,11 @@ Set email config:
    - `EMAIL_SEND_MAIL_ADDRESS` - The address and port that the emails will be sent from, e.g. "smtp.gmail.com:587".
 
 ## Run
+
+### Run once
 ```bash
 go run .
 ```
+
+### Run periodically
+Follow [these instructions](https://www.baeldung.com/linux/schedule-script-execution).
