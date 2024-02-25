@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gsproston/new-personality-alert/email"
@@ -26,6 +27,23 @@ func handleArgs(args []string) {
 	}
 }
 
+func getMovieReleasedYesterday(movies []tmdb.TmdbMovie) *tmdb.TmdbMovie {
+	// get yesterday's date
+	yesterday := time.Now().UTC().Add(time.Hour * -24).Format("2006-01-02")
+	fmt.Println("Looking for movies released on", yesterday)
+
+	// see if any films were released yesterday
+	for _, movie := range movies {
+		if movie.Release_Date == yesterday &&
+			// exclude self credits
+			!strings.Contains(strings.ToLower(movie.Character), "self") {
+			return &movie
+		}
+	}
+
+	return nil
+}
+
 func main() {
 	if len(os.Args) > 1 {
 		handleArgs(os.Args)
@@ -37,22 +55,11 @@ func main() {
 	fmt.Println("Found movies:\n", movies)
 
 	if movies != nil {
-		// get yesterday's date
-		yesterday := time.Now().UTC().Add(time.Hour * -24).Format("2006-01-02")
-		fmt.Println("Looking for movies released on", yesterday)
+		movie := getMovieReleasedYesterday(movies)
 
-		// see if any films were released yesterday
-		foundMovie := false
-		for _, movie := range movies {
-			if movie.Release_Date == yesterday {
-				email.SendAlert(movie.Title, movie.Overview, movie.Character)
-				foundMovie = true
-				break
-			}
-		}
-
-		if foundMovie {
+		if movie != nil {
 			fmt.Println("New movie found!")
+			email.SendAlert(movie.Title, movie.Overview, movie.Character)
 		} else {
 			fmt.Println("No new movie :(")
 		}
