@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gsproston/new-personality-alert/email"
@@ -44,7 +45,8 @@ func main() {
 		// see if any films were released yesterday
 		foundMovie := false
 		for _, movie := range movies {
-			if movie.Release_Date == yesterday {
+			if movie.Release_Date == yesterday &&
+				!strings.Contains(strings.ToLower(movie.Character), "self") {
 				email.SendAlert(movie.Title, movie.Overview, movie.Character)
 				foundMovie = true
 				break
