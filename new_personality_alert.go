@@ -10,7 +10,7 @@ import (
 	"github.com/gsproston/new-personality-alert/tmdb"
 )
 
-const VERSION = "v1.0.0"
+const VERSION = "v1.0.1"
 
 func handleArgs(args []string) {
 	if args[1] == "--version" ||
